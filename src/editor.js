@@ -1,31 +1,39 @@
-var querystring = require('querystring')
+require('babelify/polyfill')
+var qsStringify = require('qs/lib/stringify')
 var React = require('react')
-var {Form, Fields, Field} = require('react-form-for')
+var {Form, Fields, Field, List} = require('react-form-for')
+var {ListEditor} = require('react-form-for').Components
 
 const BASE_URL = window.location.origin+window.location.pathname.replace('editor.html', 'embed.html')
-const HARD_DISKS = ['hard_disk_1', 'hard_disk_2']
-const FLOPPY_DISKS = ['floppy_disk_1', 'floppy_disk_2']
 
-const pathGetFilenameRegex = /\/([^\/]+)$/;
+const property = (prop) => (obj) => obj[prop]
 
-function pathGetFilename(path) {
-  var matches = path.match(pathGetFilenameRegex);
-  if (matches && matches.length) {
-    return matches[1];
-  } else {
-    return path;
+class DiskListEditor extends ListEditor {
+  static defaultProps = {
+    removeItemLabel: 'remove',
+    addItemLabel: 'add another',
+  }
+  render() {
+    let rendered = super.render()
+
+    return (
+      <div>
+        <label>{this.props.label}</label>
+        {rendered}
+      </div>
+    )
   }
 }
+
+const makeDisk = () => ({uri: ""})
 
 class Editor extends React.Component { 
   constructor(props) {
     super(props)
     this.state = {
       value: {
-        hard_disk_1: "hd1.qed",
-        hard_disk_2: "",
-        floppy_disk_1: "",
-        floppy_disk_2: "",
+        hard_disks: [{uri: "hd1.qed"}],
+        floppy_disks: [],
       }
     }
   }
@@ -35,46 +43,43 @@ class Editor extends React.Component {
   }
 
   render() {
-    var {value} = this.state        
-    var args = [
-      '-r',
-      '-c', 'pce-config.cfg',
-    ]
-    var files = [
-      'macplus-pcex.rom',
-      'mac-plus.rom',
-      'pce-config.cfg',
-    ]
-
-    HARD_DISKS.forEach((name, index) => {
-      if (value[name]) {
-        args.push('-I',`disk {drive = 0x8${index}; type = "auto"; file = "${pathGetFilename(value[name])}"; optional = 0}`)
-        files.push(value[name])
-      }
+    let {value} = this.state
+    let query = qsStringify({
+      hard_disks: value.hard_disks.map((v) => property('uri')(v||makeDisk())),
+      floppy_disks: value.floppy_disks.map((v) => property('uri')(v||makeDisk())),
     })
 
-    FLOPPY_DISKS.forEach((name, index) => {
-      if (value[name]) {
-        args.push('-I', `disk {drive = ${index+1}; type = "auto"; file = "${pathGetFilename(value[name])}"; optional = 1}`)
-        files.push(value[name])
-      }
-    })
-    
-    var embedUrl = BASE_URL+'?'+querystring.stringify({args, files})
+    let embedUrl = BASE_URL+'?'+query
 
     return (
-      <Form for={value} onChange={(v) => this.handleChange(v)}>
+      <Form for={value} onChange={(v) => this.handleChange(v)} className="editor">
         <h2>PCE.js embed editor</h2>
-        {HARD_DISKS.map((name) => <Field for={name} key={name} />)}
-        {FLOPPY_DISKS.map((name) => <Field for={name} key={name} />)}
-        <label>
-          Embed url
+        <List
+          for="hard_disks"
+          component={DiskListEditor}
+          className="editor-disks fieldset"
+          label="Hard Disk images"
+        >
+          <Field for="uri" label="Disk image url:" />
+        </List>
+        <List
+          for="floppy_disks"
+          component={DiskListEditor}
+          className="editor-disks fieldset"
+          label="Floppy Disk images"
+        >
+          <Field for="uri" label="Disk image url:" />
+        </List>
+        <div className="editor-embed fieldset">
+          <label>Embed url</label>
           <textarea
             value={embedUrl}
             onFocus={(e) => e.target.select()}
+            rows="4"
+            cols="50"
             readOnly
           />
-        </label>
+        </div>
       </Form>
     )
   }

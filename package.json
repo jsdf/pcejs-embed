@@ -7,19 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "watchy -w . -i 'node_modules|lib' -- npm run build",
     "build": "npm run build:embed && npm run build:editor",
-    "build:embed": "mkdir -p lib/ && cp src/embed.html lib/ && browserify -t babelify src/embed.js --noparse=\"node_modules/pcejs-macplus/lib/pcejs-macplus.js\" > lib/embed-bundle.js",
-    "build:editor": "mkdir -p lib/ && cp src/editor.html lib/ && browserify -t babelify src/editor.js > lib/editor-bundle.js"
+    "build:embed": "mkdir -p lib/ && cp src/embed.html lib/ && browserify -t [ babelify --stage 0 ] src/embed.js --noparse=\"node_modules/pcejs-macplus/lib/pcejs-macplus.js\" > lib/embed-bundle.js",
+    "build:editor": "mkdir -p lib/ && cp src/editor.html lib/ && browserify -t [ babelify --stage 0 ] src/editor.js > lib/editor-bundle.js"
   },
   "author": "James Friend <james@jsdf.co> (http://jsdf.co/)",
   "license": "ISC",
   "dependencies": {
-    "babelify": "^5.0.3",
+    "babelify": "^6.0.2",
     "browserify": "^4.2.3",
     "browserify-incremental": "^1.5.0",
     "pcejs-macplus": "^0.1.5",
     "pcejs-util": "^0.1.0",
+    "qs": "^2.4.1",
     "react": "^0.13.0-beta.1",
-    "react-form-for": "^1.0.3"
+    "react-form-for": "^1.1.0",
     "watchy": "^0.6.0"
   }
 }
