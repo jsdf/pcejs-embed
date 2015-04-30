@@ -4,6 +4,7 @@
 
 ```bash
 # build app JS bundles
+npm install
 npm run build
 
 # install emulator files and default system disk image
