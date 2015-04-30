@@ -29,3 +29,7 @@ Use generated Embed Url to add emulator with disk images to your website. For ex
 <iframe src="http://localhost:8080/embed.html?hard_disks%5B0%5D=%2Fhd1.qed&amp;floppy_disks%5B0%5D=%2FNumberMunchers.img">
 </iframe>
 ```
+
+Enjoy
+
+![PCEJS emulator embed](http://i.imgur.com/d6lXlmv.png)
