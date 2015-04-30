@@ -1,11 +1,22 @@
 # pcejs-embed
 
+## instructions
+
 ```bash
+# build app JS bundles
 npm run build
+
+# install emulator files and default system disk image
 cd lib/
 curl -O http://jamesfriend.com.au/pce-js/dist/macplus-system.zip
 unzip macplus-system.zip
+
+# grab the extension rom file from the npm package
 cp ../node_modules/pcejs-macplus/macplus-pcex.rom ./macplus-pcex.rom
+
+# serve up the lib/ directory
+npm install -g http-server
+http-server ./ # lib/
 open http://localhost:8080/editor.html
 ```
 
