@@ -1,5 +1,7 @@
 # pcejs-embed
 
+A web-based tool for generating an embeddable [PCEJS](https://github.com/jsdf/pce) emulator, with your own custom disks.
+
 ## instructions
 
 ```bash
